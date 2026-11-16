@@ -1,0 +1,45 @@
+### Variables
+@host = http://localhost:8080
+
+### Health
+GET {{host}}/healthz
+
+### Login (alice) – keep the token in a variable
+# @name login
+POST {{host}}/api/v1/auth/login
+Content-Type: application/json
+
+{"username":"alice","password":"alice-pass"}
+
+###
+@token = {{login.response.body.$.data.access_token}}
+
+### Create SELL order
+POST {{host}}/api/v1/orders
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{"symbol":"BBCA","side":"SELL","price":9000,"quantity":100}
+
+### My orders (filter by symbol/status)
+GET {{host}}/api/v1/orders?symbol=BBCA&status=PARTIAL&limit=20
+Authorization: Bearer {{token}}
+
+### Cancel order
+DELETE {{host}}/api/v1/orders/ORD-xxxxxxxxxxxxxxxx
+Authorization: Bearer {{token}}
+
+### Trade history (public)
+GET {{host}}/api/v1/trades?symbol=BBCA&limit=20
+
+### Market snapshot (public)
+GET {{host}}/api/v1/market/tickers
+
+###
+GET {{host}}/api/v1/market/tickers/BBCA
+
+###
+GET {{host}}/api/v1/market/orderbook/BBCA?depth=5
+
+###
+GET {{host}}/api/v1/market/trades/BBCA?limit=10
